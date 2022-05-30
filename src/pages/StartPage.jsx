@@ -1,17 +1,32 @@
-import { Col, Row, Button } from 'react-bootstrap'
-const StartPage = () => {
-    return (
-		<>
-            <Row>
-                <Col md={8} className="mx-auto">
-                    <div className="start-wrapper">
-                        <h1>Click to start game!</h1>
-                        <Button className='tja'>Starta</Button>
-                    </div>
-                </Col>
-            </Row>
+import { Col, Row, Button, Form } from 'react-bootstrap'
 
-		</>
+const StartPage = () => {
+    
+    return (
+        <Row>
+            <Col lg={4} md={6} xs={8} className="mx-auto">
+                <div className="logo"></div>
+                <div className="start-wrapper">
+                    <Form>
+                        <Form.Group className="mb-3" controlId="username">
+                            <Form.Control
+                                placeholder="Enter your username"
+                                required
+                                type="text"
+                            />
+                        </Form.Group>
+
+                        <Button 
+                            variant="success" 
+                            type="submit" 
+                            className='start-btn'>
+                                Join Game
+                        </Button>
+
+                    </Form>
+                </div>
+            </Col>
+        </Row>
 	)
 }
 

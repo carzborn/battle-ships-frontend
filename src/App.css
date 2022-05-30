@@ -1,26 +1,31 @@
 .App {
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100vw;
-    height: 100vh;
-
-}
-
-.P1-board,
-.P2-board {
-    height: 40vh;
-    text-align: center;
-    /* border: 2px solid grey; */
-    border-radius: 5px;
-    background-color: white;
-}
+    background-image: url(/src/assets/imgs/background.webp);
+    background-position: center;
+  }
 
 .start-wrapper {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    text-align: center;
+    padding: 0px 40px;
+}
+
+.logo {
+    background-image: url(./assets/imgs/logo.png);
+    background-repeat:no-repeat;
+    background-size:contain;
+    background-position: center;
+    height:100px;
+    width: auto;
+    margin-bottom: 30px;
+}
+
+.start-btn {
+    background-color: black;
+    border-color: black;
+    margin-top: 10px;
 }
 
 .game-wrapper{
@@ -67,4 +72,10 @@
 
 .miss{
     background-color: red
+}
+
+.shot {
+    {
+        pointer-events: none;
+      }
 }
