@@ -45,7 +45,7 @@
     grid-row-gap:0px;
 }
 
-.yourBoard div{
+.cell {
     border: 1px solid black;
     background-color:lightblue;
 }
@@ -61,21 +61,12 @@
     grid-row-gap:0px;
 }
 
-.enemyBoard div{
-    border: 1px solid black;
-    background-color:lightblue;
-}
-
 .hit{
     background-color:green;
+    pointer-events: none;
 }
 
 .miss{
-    background-color: red
-}
-
-.shot {
-    {
-        pointer-events: none;
-      }
+    background-color: red;
+    pointer-events: none;
 }
