@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useGameContext } from '../contexts/GameContextProvider'
 import { Col, Row, Button, Form } from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom'
+
 
 const StartPage = () => {
     const [ username, setUsername] = useState('')
     const [room, setRoom] = useState()
     const [roomlist, setRoomlist] = useState([])
     const { setGameUsername, socket} = useGameContext()
+    const navigate = useNavigate()
 
     const handleSubmit = e => {
 		e.preventDefault()
@@ -16,6 +19,9 @@ const StartPage = () => {
         socket.emit('user:joined', username, room, status => {
             console.log(`successfully joined ${room} as ${username}`, status)
         })
+
+        // redirect to game room
+		navigate(`/rooms/${room}`)
 	}
 
     useEffect(() => {

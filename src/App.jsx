@@ -12,7 +12,7 @@ function App() {
         <Container className='py-3'>
             <Routes>
                 <Route path="/" element={<StartPage />} />
-                <Route path="/game" element={<GamePage />} />
+                <Route path="/rooms/:room_id" element={<GamePage />} />
                 <Route path="*" element={<PageNotFound />} />
             </Routes>
         </Container>
