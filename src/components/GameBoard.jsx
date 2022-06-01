@@ -104,22 +104,32 @@ const GameBoard = () => {
 
     // const isShip = ships.map(ships => ships.positions)
     // console.log(isShip)
-
     const handleClick = (e) => {
         const clicked = e.target.getAttribute("data-id")
+        const clickedIndex = takenCords.indexOf(clicked)
 
-        if(e.target.className === "ship"){
-            e.target.className = "hit"
-            console.log("Hit!")
+        if(takenCords.includes(clickedIndex)) {
 
-        }   else{
-            e.target.className = "miss"
-            console.log("Miss!")
+            if (clickedIndex <= 1) {
+                ships[0].length--
+            }
+
+            if(clickedIndex >= 2 && clickedIndex <= 3){
+                ships[1].length--
+            }
+
+            if(clickedIndex >= 4 && clickedIndex <=6){
+                ships[2].length--
+            }
+
+            if(clickedIndex >=7 && clickedIndex <=10){
+                ships[3].length--
+            }
         }
-
         console.log(`shots fired at ${clicked}`);
         socket.emit('user:click', `${clicked}`);
     }
+
         
     useEffect(()=>{
         createBoard(yourBoard,enemyBoard)
