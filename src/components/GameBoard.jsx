@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
+import {useGameContext} from '../contexts/GameContextProvider'
 
 const GameBoard = () => {
   
+    const {socket} = useGameContext()
     const [playerBoard, setPlayerBoard] = useState([]);
 	const [opponentBoard, setOpponentBoard] = useState([]);
 
@@ -105,7 +107,18 @@ const GameBoard = () => {
 
     const handleClick = (e) => {
         const clicked = e.target.getAttribute("data-id")
+
+        if(e.target.className === "ship"){
+            e.target.className = "hit"
+            console.log("Hit!")
+
+        }   else{
+            e.target.className = "miss"
+            console.log("Miss!")
+        }
+
         console.log(`shots fired at ${clicked}`);
+        socket.emit('user:click', `${clicked}`);
     }
         
     useEffect(()=>{
@@ -130,7 +143,9 @@ const GameBoard = () => {
 
                 <div>
                     <h3>Enemy Board</h3>
-                    <div className="enemyBoard"onClick={handleClick}>{opponentBoard}</div>
+                    <div className="enemyBoard">
+                        {opponentBoard}
+                    </div>
                 </div>
             </div>
         </div>
