@@ -5,16 +5,14 @@ import { useNavigate } from 'react-router-dom'
 
 
 const StartPage = () => {
-    const {socket} = useGameContext()
+    const {socket, setFullGame, p1, setP1, p2, setP2} = useGameContext()
     const [ username, setUsername] = useState('')
-    const [p1, setP1] = useState('')
-    const [p2, setP2] = useState('')
-    const [fullGame, setFullGame] = useState('')
+
+    
     const navigate = useNavigate()
 
     const handleSubmit = e => {
 		e.preventDefault()
-        
         socket.emit('user:joined', username)
         // redirect to game room
         navigate(`/game`)
@@ -28,14 +26,18 @@ const StartPage = () => {
 
                 setP1(player1)
                 setP2(player2)
+
+                console.log(p1)
+                console.log(p2)
+
             }
         })
 
         socket.on('game:full', () => {
-          setFullGame(true)      
+          setFullGame(true)
         })
           
-}, [p1, p2])
+}, [p2, p1, username])
 
     return (
         <Row>

@@ -10,8 +10,18 @@ export const useGameContext = () => {
 
 const GameContextProvider = ({ children }) => {
 
+    const [fullGame, setFullGame] = useState('')
+    const [p1, setP1] = useState('')
+    const [p2, setP2] = useState('')
+
     const values = {
         socket,
+        fullGame,
+        setFullGame,
+        p1, 
+        setP1, 
+        p2, 
+        setP2
     }
 
     return (
