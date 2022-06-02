@@ -36,7 +36,7 @@ const StartPage = () => {
         socket.on('game:full', () => {
           setFullGame(true)
         })
-          
+          // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [p2, p1, username])
 
     return (

@@ -116,6 +116,7 @@ const GameBoard = () => {
     useEffect(()=>{
         createBoard(yourBoard,enemyBoard)
         generateShips()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 
 
