@@ -80,61 +80,48 @@ const GameBoard = () => {
         }
     }
 
-    // const randomizeShips = () => {
-    //     //random start posistion for the ship
-    //     const randomPos = (arr, length) => {
-    //         const pos = Math.floor(Math.random() * (arr.length - length))
-    //         return arr[pos]
-    //     }
-        
-    //     ships.forEach((ship) => {
-    //         let startCol = randomPos(cols, ship.length)
-    //         let startRow = randomPos(rows, ship.length)
-              
-    //         while(ship.positions.length < ship.length){
-    //             ship.positions.push(startCol + startRow)
-    //             startCol = startCol +1 
-    //         }  
-    //     })
-    //     return ships
-    // }
-    
-    // randomizeShips()
-
-
-    // const isShip = ships.map(ships => ships.positions)
-    // console.log(isShip)
     const handleClick = (e) => {
         const clicked = e.target.getAttribute("data-id")
         const clickedIndex = takenCords.indexOf(clicked)
 
-        if(takenCords.includes(clickedIndex)) {
+        socket.emit('user:clicked', clicked);
 
+        if(takenCords.includes(clicked)) {
+            socket.emit("user:reply", clicked, true)
+            e.target.className = "hit"
+            
             if (clickedIndex <= 1) {
                 ships[0].length--
-            }
+            } 
 
             if(clickedIndex >= 2 && clickedIndex <= 3){
                 ships[1].length--
-            }
+            } 
 
             if(clickedIndex >= 4 && clickedIndex <=6){
                 ships[2].length--
-            }
+            } 
 
             if(clickedIndex >=7 && clickedIndex <=10){
                 ships[3].length--
-            }
+            } 
+        } else {
+            socket.emit('user:reply', clicked, false)
+            e.target.className = "miss"
         }
+
         console.log(`shots fired at ${clicked}`);
-        socket.emit('user:click', `${clicked}`);
     }
 
-        
     useEffect(()=>{
         createBoard(yourBoard,enemyBoard)
         generateShips()
     },[])
+
+
+    socket.on('user:click', handleClick)
+    // socket.on('user:recieved', recieveShot)
+
     return (
         <div >
             <h2 className="text-center">Time to sink some ships!</h2>
