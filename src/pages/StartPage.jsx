@@ -5,31 +5,37 @@ import { useNavigate } from 'react-router-dom'
 
 
 const StartPage = () => {
+    const {socket} = useGameContext()
     const [ username, setUsername] = useState('')
-    const [room, setRoom] = useState()
-    const [roomlist, setRoomlist] = useState([])
-    const { setGameUsername, socket} = useGameContext()
+    const [p1, setP1] = useState('')
+    const [p2, setP2] = useState('')
+    const [fullGame, setFullGame] = useState('')
     const navigate = useNavigate()
 
     const handleSubmit = e => {
 		e.preventDefault()
-
-		setGameUsername(username)
-
-        socket.emit('user:joined', username, room, status => {
-            console.log(`successfully joined ${room} as ${username}`, status)
-        })
-
+        
+        socket.emit('user:joined', username)
         // redirect to game room
-		navigate(`/rooms/${room}`)
+        navigate(`/game`)
 	}
 
     useEffect(() => {
-		// send roomlist event to server
-		socket.emit('get-room-list', rooms => {
-			setRoomlist(rooms)
-		})
-	}, [socket])
+        socket.on('game:profiles', function(players){
+            if(players.length === 2){
+                const player1 = players.find((player) => player.id === socket.id)
+                const player2 = players.find((player) => player.id !== socket.id)
+
+                setP1(player1)
+                setP2(player2)
+            }
+        })
+
+        socket.on('game:full', () => {
+          setFullGame(true)      
+        })
+          
+}, [p1, p2])
 
     return (
         <Row>
@@ -39,31 +45,13 @@ const StartPage = () => {
                     <Form onSubmit={handleSubmit}>
                         <Form.Group className="mb-3" controlId="username">
                             <Form.Control
-                                onChange={e => setUsername(e.target.value)}
+                                onChange={(e) => setUsername(e.target.value)}
                                 placeholder="Enter your username"
                                 required
                                 type="text"
                                 value={username}
                             />
                         </Form.Group>
-
-                        <Form.Group className="mb-3" controlId="room">
-					        <Form.Select
-                                onChange={e => setRoom(e.target.value)}
-                                required
-                                value={room}
-                            >
-                                {roomlist.length === 0 && <option disabled>Loading...</option>}
-                                {roomlist.length && (
-                                    <>
-                                        <option value="">Select a game to join</option>
-                                        {roomlist.map(r =>
-                                            <option key={r.id} value={r.id}>{r.name}</option>
-                                        )}
-                                    </>
-                                )}
-                            </Form.Select>
-					    </Form.Group>
 
                         <Button 
                             variant="success" 
