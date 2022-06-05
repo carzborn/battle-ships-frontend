@@ -30,7 +30,7 @@
 
 .game-wrapper{
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
 }
 
@@ -62,11 +62,35 @@
 }
 
 .hit{
-    background-color:green;
+    background-image: url(./assets/imgs/hit.png);
+    background-size:contain;
+    height:100%;
+    width: auto;
     pointer-events: none;
 }
 
 .miss{
-    background-color: red;
+    background-image: url(./assets/imgs/water-swirl.jpg);
+    background-size:contain;
+    background-position: bottom;
+    border-radius: 50%;
+    height:100%;
+    width: auto;
     pointer-events: none;
+}
+
+.info-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center
+}
+
+.turn {
+
+}
+
+.boats-left {
+    margin-top: 10px;
+
 }

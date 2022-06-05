@@ -3,7 +3,7 @@ import {useGameContext} from '../contexts/GameContextProvider'
 
 const GameBoard = () => {
   
-    const {socket} = useGameContext()
+    const {socket, p1, p2} = useGameContext()
     const [playerBoard, setPlayerBoard] = useState([]);
 	const [opponentBoard, setOpponentBoard] = useState([]);
     const [shipsLeft, setShipsLeft] = useState(4)
@@ -51,8 +51,6 @@ const GameBoard = () => {
         setOpponentBoard((opponentBoard) => [...opponentBoard, ...eBoard])    
     }
 
-    console.log(playerBoard)
-
     let takenCords = []
     let occupied = null 
 
@@ -92,7 +90,7 @@ const GameBoard = () => {
         if (takenCords.includes(clicked)) {
             socket.emit("user:reply", clicked, true)
             e.target.className = "hit"
-            
+    
             if (clickedIndex <= 1) {
                 ships[0].length-- 
                 if (ships[0].length === 0){
@@ -131,7 +129,6 @@ const GameBoard = () => {
     }
     console.log(shipsLeft)
 
-
     useEffect(()=>{
         createBoard(yourBoard,enemyBoard)
         generateShips()
@@ -143,29 +140,33 @@ const GameBoard = () => {
     // socket.on('user:recieved', recieveShot)
 
     return (
-        <div >
-            <h2 className="text-center">Time to sink some ships!</h2>
-
+        <>
+            <div className="logo"></div>
 
             <div className="game-wrapper">
                 <div>
-                    <h3>Your Board</h3>
+                    <h3>{p1.username}</h3>
                     <div className="yourBoard">{playerBoard}</div>
                 </div>
 
-                <div>
-                    <h3>friendly ships left: 4/4</h3>
-                    <h3>Enemy ships left: 4/4</h3>
+                <div className='info-wrapper'>
+                    <div className='turn'>
+                        <h2>Someones turn</h2>
+                    </div>
+                    <div className="boats-left">
+                        <h3>Boats left: </h3>
+                        <h3>{shipsLeft} : {shipsLeft}</h3>
+                    </div>
                 </div>
 
                 <div>
-                    <h3>Enemy Board</h3>
+                    <h3>{p2.username}</h3>
                     <div className="enemyBoard">
                         {opponentBoard}
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 
