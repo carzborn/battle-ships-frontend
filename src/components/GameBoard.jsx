@@ -46,7 +46,7 @@ const GameBoard = () => {
         
         for (let y=0; y<rows.length; y++ ) {
             for (let x=0; x<cols.length; x++){
-                mBoard.push(<div className="cell" key={`${cols[x]}${rows[y]}`} data-id={`${cols[x]}${rows[y]}`}></div>)
+                mBoard.push(<div className="cell" key={`${cols[x]}${rows[y]}`} data-id={`m${cols[x]}${rows[y]}`}></div>)
                 eBoard.push(<div className="cell" onClick={handleClick} key={`${cols[x]}${rows[y]}`} data-id={`${cols[x]}${rows[y]}`}></div>)
             }
         } 
@@ -67,7 +67,7 @@ const GameBoard = () => {
             let xStart = cols[Math.floor(Math.random() * (cols.length - ship.length +1))]
           
             while(ship.positions.length < ship.length){     
-                ship.positions.push(xStart + yStart)
+                ship.positions.push("m" + xStart + yStart)
                 xStart = xStart +1 
             }
             
@@ -84,15 +84,30 @@ const GameBoard = () => {
         }
     }
 
+    
+    console.log(shipsLeft)
+
+    const handlePlayerLeft = () =>{
+        console.log(`${p2.username} left the game`)
+
+        setP1('')
+        setP2('')
+        setFullGame(false)
+        navigate(`/`)
+    }
+
     const handleClick = (e) => {
-        const clicked = e.target.getAttribute("data-id")
+        const clicked = "m" + e.target.getAttribute("data-id")
         const clickedIndex = takenCords.indexOf(clicked)
 
-        // socket.emit('user:clicked', clicked);
+        socket.emit('user:clicked', clicked)
+
+        console.log("line 115", clicked)
 
         if (takenCords.includes(clicked)) {
-            socket.emit("user:reply", clicked, true)
+            socket.emit("user:shot", clicked, true)
             e.target.className = "hit"
+
     
             if (clickedIndex <= 1) {
                 ships[0].length-- 
@@ -123,22 +138,21 @@ const GameBoard = () => {
             } 
 
             } else {
-            socket.emit('user:reply', clicked, false)
+            socket.emit('user:shot', clicked, false)
                 e.target.className = "miss"
             }
 
         console.log(`shots fired at ${clicked}`);
         
     }
-    console.log(shipsLeft)
 
-    const handlePlayerLeft = () =>{
-        console.log(`${p2.username} left the game`)
 
-        setP1('')
-        setP2('')
-        setFullGame(false)
-        navigate(`/`)
+    const handleShotResult = (clicked, hit) => {
+        if(hit){
+            console.log(`${clicked} was hit`)
+        } else{
+            console.log(`${clicked} was not a hit`)
+        }
     }
 
     useEffect(()=>{
@@ -148,11 +162,14 @@ const GameBoard = () => {
     },[])
 
     useEffect(()=>{
+        socket.on('user:click', handleClick)
+        socket.on('shot:result', handleShotResult)
+    },[handleClick])
+
+    useEffect(()=>{
         socket.on("player:disconnected", handlePlayerLeft)
         
     },[socket])
-    // socket.on('user:click', handleClick)
-    // socket.on('user:recieved', recieveShot)
 
     return (
         <>
