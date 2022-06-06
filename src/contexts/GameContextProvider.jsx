@@ -10,7 +10,7 @@ export const useGameContext = () => {
 
 const GameContextProvider = ({ children }) => {
 
-    const [fullGame, setFullGame] = useState('')
+    const [fullGame, setFullGame] = useState(false)
     const [p1, setP1] = useState('')
     const [p2, setP2] = useState('')
 

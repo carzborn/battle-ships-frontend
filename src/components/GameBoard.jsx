@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
 import {useGameContext} from '../contexts/GameContextProvider'
+import { useNavigate } from 'react-router-dom'
 
 const GameBoard = () => {
   
-    const {socket, p1, p2} = useGameContext()
+    const navigate = useNavigate()
+    const {socket, p1, setP1, p2, setP2, setFullGame} = useGameContext()
     const [playerBoard, setPlayerBoard] = useState([]);
 	const [opponentBoard, setOpponentBoard] = useState([]);
-    const [shipsLeft, setShipsLeft] = useState(4)
+    const [shipsLeft, setShipsLeft] = useState(4);
+    
 
     const ships = [
         {
@@ -85,7 +88,7 @@ const GameBoard = () => {
         const clicked = e.target.getAttribute("data-id")
         const clickedIndex = takenCords.indexOf(clicked)
 
-        socket.emit('user:clicked', clicked);
+        // socket.emit('user:clicked', clicked);
 
         if (takenCords.includes(clicked)) {
             socket.emit("user:reply", clicked, true)
@@ -129,14 +132,26 @@ const GameBoard = () => {
     }
     console.log(shipsLeft)
 
+    const handlePlayerLeft = () =>{
+        console.log(`${p2.username} left the game`)
+
+        setP1('')
+        setP2('')
+        setFullGame(false)
+        navigate(`/`)
+    }
+
     useEffect(()=>{
         createBoard(yourBoard,enemyBoard)
         generateShips()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 
-
-    socket.on('user:click', handleClick)
+    useEffect(()=>{
+        socket.on("player:disconnected", handlePlayerLeft)
+        
+    },[socket])
+    // socket.on('user:click', handleClick)
     // socket.on('user:recieved', recieveShot)
 
     return (
