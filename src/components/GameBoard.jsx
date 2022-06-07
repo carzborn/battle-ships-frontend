@@ -9,6 +9,7 @@ const GameBoard = () => {
     const [playerBoard, setPlayerBoard] = useState([]);
 	const [opponentBoard, setOpponentBoard] = useState([]);
     const [shipsLeft, setShipsLeft] = useState(4);
+    const [boats, setBoats] = useState([])
     
 
     const ships = [
@@ -46,7 +47,7 @@ const GameBoard = () => {
         
         for (let y=0; y<rows.length; y++ ) {
             for (let x=0; x<cols.length; x++){
-                mBoard.push(<div className="cell" key={`${cols[x]}${rows[y]}`} data-id={`m${cols[x]}${rows[y]}`}></div>)
+                mBoard.push(<div className="cell" key={`m${cols[x]}${rows[y]}`} data-id={`m${cols[x]}${rows[y]}`}></div>)
                 eBoard.push(<div className="cell" onClick={handleClick} key={`${cols[x]}${rows[y]}`} data-id={`${cols[x]}${rows[y]}`}></div>)
             }
         } 
@@ -55,9 +56,7 @@ const GameBoard = () => {
     }
 
     let takenCords = []
-    let occupied = null 
-
-    // playerBoard.findIndex(x => x.id === '45');
+    let occupied = null
 
     const generateShips = () => {
 
@@ -82,10 +81,10 @@ const GameBoard = () => {
             console.log('here is already a boat')
             generateShips()
         }
-    }
 
-    
-    console.log(shipsLeft)
+        setBoats(takenCords)
+        console.log(boats)
+    }
 
     const handlePlayerLeft = () =>{
         console.log(`${p2.username} left the game`)
@@ -155,21 +154,49 @@ const GameBoard = () => {
         }
     }
 
+    const showShips = () => {
+        // console.log(document.querySelector('[data-id="m1A"]'))
+
+            // for (let y=0; y<playerBoard.length; y++ ) {
+            //     if (playerBoard[y].key === 'm5J') {
+            //         document.querySelector(`.${playerBoard[y].props.className}`).className="ship"
+
+
+            //         console.log(playerBoard[y].key)
+            //     }
+
+        playerBoard.forEach((cell) => {
+            if(boats.includes(cell.key)){
+                document.querySelector(`[data-id=${cell.key}`).className="ship"
+            }   
+        })        
+    }
+
     useEffect(()=>{
         createBoard(yourBoard,enemyBoard)
         generateShips()
+    
         // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 
     useEffect(()=>{
-        socket.on('user:click', handleClick)
         socket.on('shot:result', handleShotResult)
+        socket.on('user:click', handleClick)
+
     },[handleClick])
 
     useEffect(()=>{
         socket.on("player:disconnected", handlePlayerLeft)
-        
+
     },[socket])
+
+
+    useEffect(()=>{
+
+        showShips()
+        
+    },[createBoard])
+    
 
     return (
         <>
