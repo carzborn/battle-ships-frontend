@@ -149,8 +149,10 @@ const GameBoard = () => {
     const handleShotResult = (clicked, hit) => {
         if(hit){
             console.log(`${clicked} was hit`)
+            document.querySelector(`[data-id=${clicked}]`).className="hit"
         } else{
             console.log(`${clicked} was not a hit`)
+            document.querySelector(`[data-id=${clicked}]`).classList="miss"
         }
     }
 
