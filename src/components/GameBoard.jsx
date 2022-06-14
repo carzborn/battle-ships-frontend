@@ -71,31 +71,50 @@ const GameBoard = () => {
   
     return (
         <>
+            
             <div className="logo"></div>
 
             <div className="game-wrapper">
                 <div>
-                    <h3>{p1.username}</h3>
-                    <div className="yourBoard">{playerBoard}</div>
+                    <div><h3>{p1.username}</h3></div>
+                    <div className="yourBoard">
+                        {playerBoard.map((x) => x.map((y, i)=> {
+                            return (
+                                <div className={y
+                                        ? "ship"
+                                        : "cell"
+                                    }
+                                    key={i}>{i+1}
+                                </div>
+                                )
+                            }
+                        ))}
+                    </div>
                 </div>
-
+                
                 <div className='info-wrapper'>
                     <div className='turn'>
-                        <h2>Someones turn</h2>
+                        <h2>Someone's turn</h2>
                     </div>
                     <div className="boats-left">
                         <h3>Boats left: </h3>
-                        <h3>4 : 4</h3>
+                        <h3> 4 : 4 </h3>
                     </div>
                 </div>
 
                 <div>
-                    <h3>{p2.username}</h3>
-                    <div className="enemyBoard">
-                        {opponentBoard}
+                    <div><h3>{p2.username}</h3></div>
+                        <div className="enemyBoard">
+                                {opponentBoard.map((x) => x.map((y, i)=> {
+                                    return (
+                                        <div className= "cell"key={i}>{i+1}</div>
+                                        )
+                                    }
+                                ))}
+                        </div>
                     </div>
-                </div>
             </div>
+
         </>
     )
 }
