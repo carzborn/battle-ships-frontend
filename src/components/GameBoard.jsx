@@ -9,6 +9,7 @@ const GameBoard = () => {
     const [playerBoard, setPlayerBoard] = useState([]);
 	const [opponentBoard, setOpponentBoard] = useState([]);
     const [shipsLeft, setShipsLeft] = useState(4);
+    const [myTurn, setMyTurn] = useState();
 
 
     //Create both gameboards
@@ -55,10 +56,19 @@ const GameBoard = () => {
     }
 
     const handleClick = (index,i) => {
-        console.log('You shot: ', index,i )
+        if(myTurn){
+            console.log(index,i)
+            setMyTurn(false)
+            console.log(myTurn)
+        } else{
+            console.log("ITS NOT YOUR TURN")
+        }
+        
     }
 
     const handleShot = (index,i) => {
+        setMyTurn(true)
+        console.log(myTurn)
 
         console.log(index,i)
         console.log(myGrid[index][i])
@@ -84,6 +94,7 @@ const GameBoard = () => {
     useEffect(()=> {
         setPlayerBoard(myGrid)
         setOpponentBoard(enemyGrid)
+        setMyTurn(p1.turn)
         console.log(playerBoard)
     },[])
 
@@ -121,7 +132,7 @@ const GameBoard = () => {
                 
                 <div className='info-wrapper'>
                     <div className='turn'>
-                        <h2>Someone's turn</h2>
+                        {myTurn ? <h2>{p1.username}'s turn</h2> : <h2>{p2.username}'s turn</h2>}
                     </div>
                     <div className="boats-left">
                         <h3>Boats left: </h3>
@@ -131,7 +142,7 @@ const GameBoard = () => {
 
                 <div>
                     <div><h3>{p2.username}</h3></div>
-                    <div className="enemyBoard">
+                    <div className={myTurn ? "enemyBoard" : "enemyBoard disabled"   }>
                             {opponentBoard.map((x,index) => x.map((y, i)=> {
                                 return (
                                     <div className= "cell"
