@@ -53,6 +53,10 @@ const GameBoard = () => {
         }
     }
 
+    const handleClick = (index,i) => {
+        console.log('You shot: ', index,i )
+    }
+
     
     useEffect(()=> {
         setPlayerBoard(myGrid)
@@ -71,7 +75,7 @@ const GameBoard = () => {
   
     return (
         <>
-            
+
             <div className="logo"></div>
 
             <div className="game-wrapper">
@@ -104,15 +108,17 @@ const GameBoard = () => {
 
                 <div>
                     <div><h3>{p2.username}</h3></div>
-                        <div className="enemyBoard">
-                                {opponentBoard.map((x) => x.map((y, i)=> {
-                                    return (
-                                        <div className= "cell"key={i}>{i+1}</div>
-                                        )
-                                    }
-                                ))}
-                        </div>
+                    <div className="enemyBoard">
+                            {opponentBoard.map((x,index) => x.map((y, i)=> {
+                                return (
+                                    <div className= "cell"
+                                    onClick={(e)=> {handleClick(index,i,e)}}
+                                    key={i}>{i+1}</div>
+                                )
+                            }
+                        ))}
                     </div>
+                </div>
             </div>
 
         </>
