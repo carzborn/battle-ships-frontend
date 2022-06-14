@@ -19,7 +19,22 @@ const GameBoard = () => {
         setOpponentBoard(enemyGrid)
         console.log(playerBoard)
     },[])
-    
+
+    // Make a ship with desired length
+    const makeShip = (length) => {
+        return {
+            id: length,
+            length: length,
+            sunken: false,
+            positions: [],
+        }
+    }
+
+    // Create all 4 ships 
+    const ship1 = makeShip(2)
+    const ship2 = makeShip(2)
+    const ship3 = makeShip(3)
+    const ship4 = makeShip(4)
   
     return (
         <>
