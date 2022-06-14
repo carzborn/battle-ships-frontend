@@ -15,6 +15,7 @@ const GameBoard = () => {
     //Create both gameboards
     let myGrid = [...Array(10)].map(e => Array(10).fill(null));
     let enemyGrid = [...Array(10)].map(e => Array(10).fill(null));
+    let hit
 
     // Make a ship with desired length
     const makeShip = (length) => {
@@ -60,6 +61,7 @@ const GameBoard = () => {
             console.log(index,i)
             setMyTurn(false)
             console.log(myTurn)
+            socket.emit('user:clicked', index, i)
         } else{
             console.log("ITS NOT YOUR TURN")
         }
@@ -74,7 +76,8 @@ const GameBoard = () => {
         console.log(myGrid[index][i])
 
         if (myGrid[index][i] !== null) {
-
+                hit = true
+                socket.emit('user:reply', index,i,hit)
                 // reduce ships length by 1 and set classname to "hit"
                 console.log(myGrid[index][i].length - 1)
                 myGrid[index][i].length--
@@ -87,8 +90,15 @@ const GameBoard = () => {
                 }
 
         } else {
+            hit = false
             console.log("MISS")
+            socket.emit('user:reply', index,i, hit)
         }
+    }
+
+
+    const handleResult = (index, i, hit) => {
+        console.log(index,i,hit)
     }
     
     useEffect(()=> {
@@ -105,6 +115,12 @@ const GameBoard = () => {
         randomShipPos(ship3)
         randomShipPos(ship4)
     },[])
+
+
+    useEffect(()=>{
+        socket.on('user:shot', handleShot)
+        socket.on('shot:result', handleResult)
+    },[socket])
 
   
     return (
