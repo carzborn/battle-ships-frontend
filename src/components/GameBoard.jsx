@@ -8,6 +8,7 @@ const GameBoard = () => {
     const {socket, p1, setP1, p2, setP2, setFullGame} = useGameContext()
     const [playerBoard, setPlayerBoard] = useState([]);
 	const [opponentBoard, setOpponentBoard] = useState([]);
+    const [shipsLeft, setShipsLeft] = useState(4);
 
 
     //Create both gameboards
@@ -57,6 +58,28 @@ const GameBoard = () => {
         console.log('You shot: ', index,i )
     }
 
+    const handleShot = (index,i) => {
+
+        console.log(index,i)
+        console.log(myGrid[index][i])
+
+        if (myGrid[index][i] !== null) {
+
+                // reduce ships length by 1 and set classname to "hit"
+                console.log(myGrid[index][i].length - 1)
+                myGrid[index][i].length--
+                console.log("HIT")
+
+                // if target ship is sunken reduce ships left by 1
+                if (myGrid[index][i].length === 0) {
+                    setShipsLeft((prevState) => prevState - 1)
+                    console.log("Ett skepp nere")
+                }
+
+        } else {
+            console.log("MISS")
+        }
+    }
     
     useEffect(()=> {
         setPlayerBoard(myGrid)
@@ -102,7 +125,7 @@ const GameBoard = () => {
                     </div>
                     <div className="boats-left">
                         <h3>Boats left: </h3>
-                        <h3> 4 : 4 </h3>
+                        <h3>4 : {shipsLeft}</h3>
                     </div>
                 </div>
 
