@@ -34,9 +34,22 @@ const GameBoard = () => {
     const randomShipPos = (ship) => {
         let y = Math.floor(Math.random() * 9)
         let x = Math.floor(Math.random() * (9 - ship.length))
+        let occupied = false
 
         for(let i = x; i < x + ship.length; i++){
-           myGrid[y][i] = ship
+            if(myGrid[y][i] !== null){
+                occupied = true
+            } 
+        }
+
+        if(occupied){
+            console.log("HERE IS SHIP!!")
+            randomShipPos(ship)
+        } else {
+
+            for(let i = x; i < x + ship.length; i++){
+                myGrid[y][i] = ship
+            }
         }
     }
 
