@@ -50,7 +50,6 @@ const GameBoard = () => {
         }
 
         if(occupied){
-            console.log("HERE IS SHIP!!")
             randomShipPos(ship)
         } else {
 
@@ -62,28 +61,19 @@ const GameBoard = () => {
 
     const handleClick = (index,i) => {
         if(myTurn){
-            console.log(index, i)
             setMyTurn(false)
             socket.emit('user:clicked', index, i,)
-        } else{
-            console.log("ITS NOT YOUR TURN")
         }
-        
     }
 
     const handleShot = (index,i,) => {
         setMyTurn(true)
 
-        console.log(index,i)
-        console.log(myGrid[index][i])
-
-
         if (myGrid[index][i] !== null) {
                 socket.emit('user:reply', index,i,true)
+
                 // reduce ships length by 1 and set classname to "hit"
-                console.log(myGrid[index][i].length - 1)
                 myGrid[index][i].length--
-                console.log("HIT")
 
                 setOpponentHits((opponentHits) => {
                     return [...opponentHits, `${index}${i}`]
@@ -93,29 +83,21 @@ const GameBoard = () => {
                 // if target ship is sunken reduce ships left by 1
                 if (myGrid[index][i].length === 0) {
                     setShipsLeft((prevState) => prevState - 1)
-                    console.log("Ett skepp nere")
                     socket.emit("ship:sunken")
                 }
 
-                console.log(myGrid)
-
         } else {
-            console.log("MISS")
             setOpponentMisses((opponentMisses) => {
 				return [...opponentMisses, `${index}${i}`]
 			}) 
 
-            console.log(playerMisses)
             myGrid[index][i] = false
             socket.emit('user:reply', index,i, false)
-            console.log(myGrid)
         }
     }
 
 
     const handleResult = (index, i, hit) => {
-        console.log(index,i,hit)
-
         if(hit){
             enemyGrid[index][i] = true
             setPlayerHits((playerHits) => {
@@ -126,8 +108,6 @@ const GameBoard = () => {
 				return [...playerMisses, `${index}${i}`]
 			}) 
         }
-
-        console.log(myGrid)
     }
 
     const handleShipsSunk = () =>{
@@ -138,7 +118,6 @@ const GameBoard = () => {
         setPlayerBoard(myGrid)
         setOpponentBoard(enemyGrid)
         setMyTurn(p1.turn)
-        console.log(myGrid)
     },[])
 
 
@@ -183,9 +162,7 @@ const GameBoard = () => {
                                         'cell': true,
                                         'hit': hits,
                                         'miss' : miss
-                                        
-                                    })                                        
-                                    }
+                                    })}
                                     data-pos={`${index}${i}`}
                                     key={i}>{i+1}
                                 </div>
@@ -228,8 +205,7 @@ const GameBoard = () => {
                                             'cell': true,
                                             'hit': hits,
                                             'miss' : miss
-                                        })
-                                    }
+                                        })}
                                     onClick={(e)=> {handleClick(index,i,e)}}
                                     data-pos={`${index}${i}`}
                                     key={i}>{i+1}

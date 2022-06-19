@@ -26,10 +26,6 @@ const StartPage = () => {
 
                 setP1(player1)
                 setP2(player2)
-
-                console.log(p1)
-                console.log(p2)
-
             }
         })
 
