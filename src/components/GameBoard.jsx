@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import {useGameContext} from '../contexts/GameContextProvider'
 import classNames from 'classnames'
-// import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 const GameBoard = () => {
   
-    // const navigate = useNavigate()
+    const navigate = useNavigate()
     const {socket, p1, setP1, p2, setP2, setFullGame} = useGameContext()
     const [playerBoard, setPlayerBoard] = useState([]);
 	const [opponentBoard, setOpponentBoard] = useState([]);
@@ -113,6 +113,13 @@ const GameBoard = () => {
     const handleShipsSunk = () =>{
         setEnemyShipsLeft((prevState) => prevState - 1)
     }
+
+    const handlePlayerLeft = () =>{
+        setP1('')
+        setP2('')
+        setFullGame(false)
+        navigate(`/`)
+    }
     
     useEffect(()=> {
         setPlayerBoard(myGrid)
@@ -139,7 +146,10 @@ const GameBoard = () => {
             socket.off('shot:result', handleResult)
             socket.off('ship:sunken', handleShipsSunk)
         }
+    },[socket])
 
+    useEffect(()=>{
+        socket.on("player:disconnected", handlePlayerLeft)
     },[socket])
 
   
