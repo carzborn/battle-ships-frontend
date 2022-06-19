@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import {useGameContext} from '../contexts/GameContextProvider'
+import classNames from 'classnames'
 // import { useNavigate } from 'react-router-dom'
 
 const GameBoard = () => {
@@ -10,12 +11,14 @@ const GameBoard = () => {
 	const [opponentBoard, setOpponentBoard] = useState([]);
     const [shipsLeft, setShipsLeft] = useState(4);
     const [myTurn, setMyTurn] = useState();
-
-
+    const [playerMisses, setPlayerMisses] = useState([]);
+    const [playerHits, setPlayerHits] = useState([]);
+    const [opponentMisses, setOpponentMisses] = useState([])
+    const [opponentHits, setOpponentHits] = useState([])
+    
     //Create both gameboards
     let myGrid = [...Array(10)].map(e => Array(10).fill(null));
     let enemyGrid = [...Array(10)].map(e => Array(10).fill(null));
-    let hit
 
     // Make a ship with desired length
     const makeShip = (length) => {
@@ -58,30 +61,33 @@ const GameBoard = () => {
 
     const handleClick = (index,i) => {
         if(myTurn){
-            console.log(index,i)
+            console.log(index, i)
             setMyTurn(false)
-            console.log(myTurn)
-            socket.emit('user:clicked', index, i)
+            socket.emit('user:clicked', index, i,)
         } else{
             console.log("ITS NOT YOUR TURN")
         }
         
     }
 
-    const handleShot = (index,i) => {
+    const handleShot = (index,i,) => {
         setMyTurn(true)
-        console.log(myTurn)
 
         console.log(index,i)
         console.log(myGrid[index][i])
 
+
         if (myGrid[index][i] !== null) {
-                hit = true
-                socket.emit('user:reply', index,i,hit)
+                socket.emit('user:reply', index,i,true)
                 // reduce ships length by 1 and set classname to "hit"
                 console.log(myGrid[index][i].length - 1)
                 myGrid[index][i].length--
                 console.log("HIT")
+
+                setOpponentHits((opponentHits) => {
+                    return [...opponentHits, `${index}${i}`]
+                })
+
 
                 // if target ship is sunken reduce ships left by 1
                 if (myGrid[index][i].length === 0) {
@@ -89,23 +95,44 @@ const GameBoard = () => {
                     console.log("Ett skepp nere")
                 }
 
+                console.log(myGrid)
+
         } else {
-            hit = false
             console.log("MISS")
-            socket.emit('user:reply', index,i, hit)
+            setOpponentMisses((opponentMisses) => {
+				return [...opponentMisses, `${index}${i}`]
+			}) 
+
+            console.log(playerMisses)
+            myGrid[index][i] = false
+            socket.emit('user:reply', index,i, false)
+            console.log(myGrid)
         }
     }
 
 
     const handleResult = (index, i, hit) => {
         console.log(index,i,hit)
+
+        if(hit){
+            enemyGrid[index][i] = true
+            setPlayerHits((playerHits) => {
+                return [...playerHits, `${index}${i}`]
+            })
+        } else {
+            setPlayerMisses((playerMisses) => {
+				return [...playerMisses, `${index}${i}`]
+			}) 
+        }
+
+        console.log(myGrid)
     }
     
     useEffect(()=> {
         setPlayerBoard(myGrid)
         setOpponentBoard(enemyGrid)
         setMyTurn(p1.turn)
-        console.log(playerBoard)
+        console.log(myGrid)
     },[])
 
 
@@ -120,6 +147,12 @@ const GameBoard = () => {
     useEffect(()=>{
         socket.on('user:shot', handleShot)
         socket.on('shot:result', handleResult)
+        
+        return () => {
+            socket.off('user:shot', handleShot)
+            socket.off('shot:result', handleResult)
+        }
+
     },[socket])
 
   
@@ -132,12 +165,20 @@ const GameBoard = () => {
                 <div>
                     <div><h3>{p1.username}</h3></div>
                     <div className="yourBoard">
-                        {playerBoard.map((x) => x.map((y, i)=> {
+                        {playerBoard.map((x,index) => x.map((y, i)=> {
+                            const miss = opponentMisses.find(pos => pos ===`${index}${i}`)
+                            const hits = opponentHits.find(pos => pos ===`${index}${i}`)
                             return (
-                                <div className={y
-                                        ? "ship"
-                                        : "cell"
+                                <div className={
+                                    classNames({
+                                        'ship': y,
+                                        'cell': true,
+                                        'hit': hits,
+                                        'miss' : miss
+                                        
+                                    })                                        
                                     }
+                                    data-pos={`${index}${i}`}
                                     key={i}>{i+1}
                                 </div>
                                 )
@@ -160,10 +201,20 @@ const GameBoard = () => {
                     <div><h3>{p2.username}</h3></div>
                     <div className={myTurn ? "enemyBoard" : "enemyBoard disabled"   }>
                             {opponentBoard.map((x,index) => x.map((y, i)=> {
+                                const miss = playerMisses.find(pos => pos ===`${index}${i}`)
+                                const hits = playerHits.find(pos => pos ===`${index}${i}`)
                                 return (
-                                    <div className= "cell"
+                                    <div className={
+                                        classNames({
+                                            'cell': true,
+                                            'hit': hits,
+                                            'miss' : miss
+                                        })
+                                    }
                                     onClick={(e)=> {handleClick(index,i,e)}}
-                                    key={i}>{i+1}</div>
+                                    data-pos={`${index}${i}`}
+                                    key={i}>{i+1}
+                                    </div>
                                 )
                             }
                         ))}
