@@ -10,6 +10,7 @@ const GameBoard = () => {
     const [playerBoard, setPlayerBoard] = useState([]);
 	const [opponentBoard, setOpponentBoard] = useState([]);
     const [shipsLeft, setShipsLeft] = useState(4);
+    const [enemyShipsLeft, setEnemyShipsLeft] = useState(4);
     const [myTurn, setMyTurn] = useState();
     const [playerMisses, setPlayerMisses] = useState([]);
     const [playerHits, setPlayerHits] = useState([]);
@@ -93,6 +94,7 @@ const GameBoard = () => {
                 if (myGrid[index][i].length === 0) {
                     setShipsLeft((prevState) => prevState - 1)
                     console.log("Ett skepp nere")
+                    socket.emit("ship:sunken")
                 }
 
                 console.log(myGrid)
@@ -127,6 +129,10 @@ const GameBoard = () => {
 
         console.log(myGrid)
     }
+
+    const handleShipsSunk = () =>{
+        setEnemyShipsLeft((prevState) => prevState - 1)
+    }
     
     useEffect(()=> {
         setPlayerBoard(myGrid)
@@ -147,10 +153,12 @@ const GameBoard = () => {
     useEffect(()=>{
         socket.on('user:shot', handleShot)
         socket.on('shot:result', handleResult)
+        socket.on('ship:sunken', handleShipsSunk)
         
         return () => {
             socket.off('user:shot', handleShot)
             socket.off('shot:result', handleResult)
+            socket.off('ship:sunken', handleShipsSunk)
         }
 
     },[socket])
@@ -193,8 +201,19 @@ const GameBoard = () => {
                     </div>
                     <div className="boats-left">
                         <h3>Boats left: </h3>
-                        <h3>4 : {shipsLeft}</h3>
+                        <h3>{shipsLeft} : {enemyShipsLeft}</h3>
                     </div>
+                    {enemyShipsLeft === 0 && (
+                        <div>
+                            <h1>You won!</h1>
+                        </div>
+                    )}
+
+                    {shipsLeft === 0 && (
+                        <div>
+                            <h1>You Lost!</h1>
+                        </div>
+                    )}
                 </div>
 
                 <div>
