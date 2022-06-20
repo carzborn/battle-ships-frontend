@@ -16,6 +16,7 @@ const GameBoard = () => {
     const [playerHits, setPlayerHits] = useState([]);
     const [opponentMisses, setOpponentMisses] = useState([])
     const [opponentHits, setOpponentHits] = useState([])
+    const [gameOver, setGameOver] = useState(false)
     
     //Create both gameboards
     let myGrid = [...Array(10)].map(e => Array(10).fill(null));
@@ -39,8 +40,8 @@ const GameBoard = () => {
 
      // Randomize ship poistions and put them on the grid
     const randomShipPos = (ship) => {
-        let y = Math.floor(Math.random() * 9)
-        let x = Math.floor(Math.random() * (9 - ship.length))
+        let y = Math.floor(Math.random() * 10)
+        let x = Math.floor(Math.random() * (11 - ship.length))
         let occupied = false
 
         for(let i = x; i < x + ship.length; i++){
@@ -96,7 +97,6 @@ const GameBoard = () => {
         }
     }
 
-
     const handleResult = (index, i, hit) => {
         if(hit){
             enemyGrid[index][i] = true
@@ -120,19 +120,34 @@ const GameBoard = () => {
         setFullGame(false)
         navigate(`/`)
     }
-    
+
+    const backToLobby = () => {
+        navigate(`/`)
+        setFullGame(false)
+        setP1('')
+        setP2('')
+        socket.emit('player:left')
+    }
+
+    useEffect(() =>{
+        if(shipsLeft === 0 || enemyShipsLeft === 0){
+            setGameOver(true)
+        }
+    },[shipsLeft,enemyShipsLeft])
+
     useEffect(()=> {
         setPlayerBoard(myGrid)
         setOpponentBoard(enemyGrid)
         setMyTurn(p1.turn)
+        // eslint-disable-next-line
     },[])
-
 
     useEffect(()=>{
         randomShipPos(ship1)
         randomShipPos(ship2)
         randomShipPos(ship3)
         randomShipPos(ship4)
+        // eslint-disable-next-line
     },[])
 
 
@@ -146,22 +161,37 @@ const GameBoard = () => {
             socket.off('shot:result', handleResult)
             socket.off('ship:sunken', handleShipsSunk)
         }
+        // eslint-disable-next-line
     },[socket])
 
     useEffect(()=>{
         socket.on("player:disconnected", handlePlayerLeft)
+        // eslint-disable-next-line
     },[socket])
 
-  
     return (
         <>
-
             <div className="logo"></div>
+
+            {gameOver && 
+                <div className="gameOverWrapper">
+                    <h2>Play Again?</h2>
+                    <div className="gameOverButtons">
+                        <button className="exit" onClick={backToLobby} >Exit</button>
+                        <button className="playAgain" onClick={backToLobby} >Play Again!</button>
+                    </div>
+                </div>
+            }
 
             <div className="game-wrapper">
                 <div>
                     <div><h3>{p1.username}</h3></div>
-                    <div className="yourBoard">
+                    <div className={
+                        classNames({
+                            'yourBoard': true,
+                            'disabled': gameOver,
+                        })
+                    }>
                         {playerBoard.map((x,index) => x.map((y, i)=> {
                             const miss = opponentMisses.find(pos => pos ===`${index}${i}`)
                             const hits = opponentHits.find(pos => pos ===`${index}${i}`)
@@ -205,7 +235,10 @@ const GameBoard = () => {
 
                 <div>
                     <div><h3>{p2.username}</h3></div>
-                    <div className={myTurn ? "enemyBoard" : "enemyBoard disabled"   }>
+                    <div className={classNames({
+                            'enemyBoard':true,
+                            'disabled': !myTurn || gameOver,                            
+                    })}>
                             {opponentBoard.map((x,index) => x.map((y, i)=> {
                                 const miss = playerMisses.find(pos => pos ===`${index}${i}`)
                                 const hits = playerHits.find(pos => pos ===`${index}${i}`)
@@ -226,7 +259,7 @@ const GameBoard = () => {
                     </div>
                 </div>
             </div>
-
+            
         </>
     )
 }
