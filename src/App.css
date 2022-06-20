@@ -36,7 +36,6 @@
 }
 
 .yourBoard{
-    border: 1px solid black;
     height:30rem;
     width: 30rem;
     display: grid;
@@ -49,10 +48,10 @@
 .cell {
     border: 1px solid black;
     background-color:lightblue;
+    border-radius: 10px;
 }
 
 .enemyBoard{
-    border: 1px solid black;
     height: 30rem;
     width: 30rem;
     display: grid;
@@ -74,7 +73,6 @@
     background-image: url(./assets/imgs/water-swirl.jpg);
     background-size:contain;
     background-position: bottom;
-    border-radius: 50%;
     height:100%;
     width: auto;
     pointer-events: none;
@@ -125,4 +123,15 @@
     background-color: cornflowerblue;
     color: white;
     padding: 10px;
+}
+
+* {
+    font-family: sharpshooter;
+    font-weight: 100;
+}
+
+@font-face {
+    font-family: "sharpshooter";   
+    src: local("sharpshooter"),
+      url("./assets/font/Sharpshooter.ttf") format("truetype");
 }

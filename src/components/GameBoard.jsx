@@ -19,8 +19,8 @@ const GameBoard = () => {
     const [gameOver, setGameOver] = useState(false)
     
     //Create both gameboards
-    let myGrid = [...Array(10)].map(e => Array(10).fill(null));
-    let enemyGrid = [...Array(10)].map(e => Array(10).fill(null));
+    const myGrid = [...Array(10)].map(e => Array(10).fill(null));
+    const enemyGrid = [...Array(10)].map(e => Array(10).fill(null));
 
     // Make a ship with desired length
     const makeShip = (length) => {
@@ -214,7 +214,7 @@ const GameBoard = () => {
                 
                 <div className='info-wrapper'>
                     <div className='turn'>
-                        {myTurn ? <h2>{p1.username}'s turn</h2> : <h2>{p2.username}'s turn</h2>}
+                        {myTurn ? <h3>{p1.username}'s turn</h3> : <h3>{p2.username}'s turn</h3>}
                     </div>
                     <div className="boats-left">
                         <h3>Boats left: </h3>

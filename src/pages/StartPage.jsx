@@ -48,6 +48,7 @@ const StartPage = () => {
                                 required
                                 type="text"
                                 value={username}
+                                maxLength="10"
                             />
                         </Form.Group>
 
